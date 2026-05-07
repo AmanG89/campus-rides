@@ -8,6 +8,8 @@ const REQUIRED_ENV = [
   "CLOUDINARY_API_KEY",
   "CLOUDINARY_API_SECRET",
   "FIREBASE_PROJECT_ID",
+  "FIREBASE_CLIENT_EMAIL",   // add this
+  "FIREBASE_PRIVATE_KEY", 
 ];
 const missingEnv = REQUIRED_ENV.filter((k) => !process.env[k]);
 if (missingEnv.length) {
@@ -163,7 +165,13 @@ const authLimiter = rateLimit({
 //  FIREBASE ADMIN
 // ══════════════════════════════════════════════════════════════
 
-admin.initializeApp({ projectId: process.env.FIREBASE_PROJECT_ID });
+admin.initializeApp({
+  credential: admin.credential.cert({
+    projectId:   process.env.FIREBASE_PROJECT_ID,
+    clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+    privateKey:  process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, "\n"),
+  }),
+});
 
 // ══════════════════════════════════════════════════════════════
 //  MONGODB
