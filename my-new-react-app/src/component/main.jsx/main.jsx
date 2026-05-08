@@ -13,7 +13,7 @@ export default function Main() {
   useEffect(() => {
     const fetchTrips = async () => {
       try {
-        const res  = await fetch("http://localhost:5000/get-trips");
+        const res = await fetch(`${process.env.REACT_APP_API_URL}/trip`);
         const data = await res.json();
         if (res.ok) setTrips(data.trips || []);
       } catch (err) {

@@ -601,7 +601,7 @@ ws.on("message", async (message) => {
 });
 
 server.listen(5000, "0.0.0.0", () => {
-  console.log("🚀 Server running on http://localhost:5000");
+  console.log("🚀 Server running on ${process.env.REACT_APP_API_URL}");
   deleteExpiredTrips();
   setInterval(deleteExpiredTrips, 60 * 60 * 1000);
 });

@@ -17,7 +17,7 @@ export default function NotificationBell() {
     if (!user?.email || !token) return;
     setLoading(true);
     try {
-      const res  = await fetch(`http://localhost:5000/notifications/${user.email}`, {
+      const res  = await fetch(`${process.env.REACT_APP_API_URL}/notifications/${user.email}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();
@@ -50,7 +50,7 @@ export default function NotificationBell() {
     if (!open && unread > 0) {
       // Mark all as read when opening
       try {
-        await fetch(`http://localhost:5000/notifications/${user.email}/read-all`, {
+        await fetch(`${process.env.REACT_APP_API_URL}/notifications/${user.email}/read-all`, {
           method:  "PUT",
           headers: { Authorization: `Bearer ${token}` },
         });
@@ -62,7 +62,7 @@ export default function NotificationBell() {
 
   const handleClear = async () => {
     try {
-      await fetch(`http://localhost:5000/notifications/${user.email}`, {
+      await fetch(`${process.env.REACT_APP_API_URL}/notifications/${user.email}`, {
         method:  "DELETE",
         headers: { Authorization: `Bearer ${token}` },
       });

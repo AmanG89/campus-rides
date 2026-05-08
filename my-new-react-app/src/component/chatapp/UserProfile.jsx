@@ -29,14 +29,14 @@ export default function UserProfile() {
 
       // Fetch user info
       const userRes  = await fetch(
-        `http://localhost:5000/users/${encodeURIComponent(decodedEmail)}`,
+        `${process.env.REACT_APP_API_URL}/users/${encodeURIComponent(decodedEmail)}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       const userData = await userRes.json();
       if (userRes.ok) setProfileUser(userData);
 
       // Fetch trips
-      const tripsRes  = await fetch("http://localhost:5000/get-trips");
+      const tripsRes  = await fetch(`${process.env.REACT_APP_API_URL}/get-trips`);
       const tripsData = await tripsRes.json();
       setTrips(tripsData.trips || []);
     } catch (err) {
@@ -76,7 +76,7 @@ export default function UserProfile() {
   const avatarSrc = profileUser.avatar
     ? profileUser.avatar.startsWith("http")
       ? profileUser.avatar
-      : `http://localhost:5000${profileUser.avatar}`
+      : `${process.env.REACT_APP_API_URL}${profileUser.avatar}`
     : null;
 
   return (
@@ -189,7 +189,7 @@ export default function UserProfile() {
                     <div className="up-trip-img-wrap">
                       {trip.imageUrl ? (
                         <img
-                          src={trip.imageUrl.startsWith("http") ? trip.imageUrl : `http://localhost:5000${trip.imageUrl}`}
+                          src={trip.imageUrl.startsWith("http") ? trip.imageUrl : `${process.env.REACT_APP_API_URL}${trip.imageUrl}`}
                           className="up-trip-img" alt={trip.title}
                         />
                       ) : (

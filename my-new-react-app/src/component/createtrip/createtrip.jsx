@@ -121,7 +121,7 @@ export default function CreateTrip() {
     try {
       const formData = new FormData();
       formData.append("image", imageFile);
-      const uploadRes  = await fetch("http://localhost:5000/upload-trip-image", {
+      const uploadRes  = await fetch(`${process.env.REACT_APP_API_URL}/upload-trip-image`, {
         method: "POST", headers: { Authorization: `Bearer ${token}` }, body: formData,
       });
       const uploadData = await uploadRes.json();
@@ -134,7 +134,7 @@ export default function CreateTrip() {
         organizer: { name: user.name, university: user.university, email: user.email, avatar: user.avatar },
       };
 
-      const res  = await fetch("http://localhost:5000/create-trip", {
+      const res  = await fetch(`${process.env.REACT_APP_API_URL}/create-trip`, {
         method: "POST",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
         body: JSON.stringify(finalData),

@@ -40,8 +40,8 @@ export default function Profile() {
         const token = localStorage.getItem("token");
 
         const [tripsRes, waitlistRes] = await Promise.all([
-          fetch("http://localhost:5000/get-trips"),
-          fetch(`http://localhost:5000/waitlist/user/${user.email}`, {
+          fetch(`${process.env.REACT_APP_API_URL}/get-trips`),
+          fetch(`${process.env.REACT_APP_API_URL}/waitlist/user/${user.email}`, {
             headers: { Authorization: `Bearer ${token}` },
           }),
         ]);
@@ -101,7 +101,7 @@ export default function Profile() {
     try {
       const formData = new FormData();
       formData.append("avatar", imageFile);
-      const res  = await fetch(`http://localhost:5000/update-avatar/${user.email}`, {
+      const res  = await fetch(`${process.env.REACT_APP_API_URL}/update-avatar/${user.email}`, {
         method: "PUT", headers: { Authorization: `Bearer ${token}` }, body: formData,
       });
       const data = await res.json();
@@ -119,7 +119,7 @@ export default function Profile() {
   const handleLeaveWaitlist = async (tripId) => {
     const token = localStorage.getItem("token");
     try {
-      await fetch("http://localhost:5000/waitlist/leave", {
+      await fetch(`${process.env.REACT_APP_API_URL}/waitlist/leave`, {
         method:  "POST",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
         body:    JSON.stringify({ tripId, email: user.email }),
@@ -146,7 +146,7 @@ export default function Profile() {
     setEditLoading(true); setEditError(""); setEditSuccess("");
     try {
       const token = localStorage.getItem("token");
-      const res   = await fetch(`http://localhost:5000/update-profile/${user.email}`, {
+      const res   = await fetch(`${process.env.REACT_APP_API_URL}/update-profile/${user.email}`, {
         method:  "PUT",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
         body:    JSON.stringify({ name: editName.trim(), university: editUni.trim() }),
@@ -165,7 +165,7 @@ export default function Profile() {
   const firstLetter = user.name ? user.name.charAt(0).toUpperCase() : "?";
 
   const resolvedAvatar = user.avatar
-    ? (user.avatar.startsWith("http") ? user.avatar : `http://localhost:5000${user.avatar}`)
+    ? (user.avatar.startsWith("http") ? user.avatar : `${process.env.REACT_APP_API_URL}${user.avatar}`)
     : null;
 
   const avatarSrc = previewUrl || (!avatarImgError && resolvedAvatar ? resolvedAvatar : null);
@@ -368,7 +368,7 @@ export default function Profile() {
                   <div key={trip._id} className="pf-trip-row-item pf-waitlist-item">
                     {trip.imageUrl ? (
                       <img
-                        src={trip.imageUrl.startsWith("http") ? trip.imageUrl : `http://localhost:5000${trip.imageUrl}`}
+                        src={trip.imageUrl.startsWith("http") ? trip.imageUrl : `${process.env.REACT_APP_API_URL}${trip.imageUrl}`}
                         className="pf-row-img" alt={trip.title} />
                     ) : (
                       <div className="pf-row-img-ph">
@@ -422,7 +422,7 @@ export default function Profile() {
                   <div key={trip._id} className="pf-trip-row-item">
                     {trip.imageUrl ? (
                       <img
-                        src={trip.imageUrl.startsWith("http") ? trip.imageUrl : `http://localhost:5000${trip.imageUrl}`}
+                        src={trip.imageUrl.startsWith("http") ? trip.imageUrl : `${process.env.REACT_APP_API_URL}${trip.imageUrl}`}
                         className="pf-row-img" alt={trip.title} />
                     ) : (
                       <div className="pf-row-img-ph">

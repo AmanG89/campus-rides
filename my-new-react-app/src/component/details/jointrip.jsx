@@ -14,7 +14,7 @@ export default function JoinTrip() {
   const user = JSON.parse(localStorage.getItem("user") || "{}");
 
   useEffect(() => {
-    fetch("http://localhost:5000/get-trips")
+    fetch(`${process.env.REACT_APP_API_URL}/get-trips`)
       .then(res => res.json())
       .then(data => {
         const found = data.trips.find(t => t._id === id);
@@ -49,7 +49,7 @@ export default function JoinTrip() {
 
     setJoining(true);
     try {
-      const res = await fetch("http://localhost:5000/join-trip", {
+      const res = await fetch(`${process.env.REACT_APP_API_URL}/join-trip`, {
         method: "POST",
         headers: {
           "Content-Type":  "application/json",
@@ -219,7 +219,7 @@ export default function JoinTrip() {
               <img
                 src={trip.organizer.avatar.startsWith("http")
                   ? trip.organizer.avatar
-                  : `http://localhost:5000${trip.organizer.avatar}`}
+                  : `${process.env.REACT_APP_API_URL}${trip.organizer.avatar}`}
                 className="jt-organizer-avatar"
                 alt={trip.organizer.name}
                 onError={(e) => { e.target.style.display = "none"; }}

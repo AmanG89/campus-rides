@@ -13,7 +13,7 @@ function AvatarFallback({ name = "" }) {
 const avatarUrl = (src) => {
   if (!src) return "";
   if (src.startsWith("http")) return src;
-  return `http://localhost:5000${src}`;
+  return `${process.env.REACT_APP_API_URL}${src}`;
 };
 
 function StarRating({ rating, count }) {
@@ -52,7 +52,7 @@ export default function Discover() {
   const [showFilters, setShowFilters] = useState(false);
 
   useEffect(() => {
-    fetch("http://localhost:5000/get-trips")
+    fetch(`${process.env.REACT_APP_API_URL}/get-trips`)
       .then(r => r.json())
       .then(data => { setTrips(data.trips || []); setLoading(false); })
       .catch(() => setLoading(false));

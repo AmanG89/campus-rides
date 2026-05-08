@@ -8,7 +8,7 @@ import "leaflet/dist/leaflet.css";
 const resolveAvatar = (src) => {
   if (!src) return null;
   if (src.startsWith("http")) return src;
-  return `http://localhost:5000${src}`;
+  return `${process.env.REACT_APP_API_URL}${src}`;
 };
 
 export default function Viewdetails() {
@@ -67,7 +67,7 @@ export default function Viewdetails() {
 
   // ── Fetch trip ──
   useEffect(() => {
-    fetch("http://localhost:5000/get-trips")
+    fetch(`${process.env.REACT_APP_API_URL}/get-trips`)
       .then(r => r.json())
       .then(data => {
         const found = data.trips?.find(t => t._id === id) || null;
@@ -81,7 +81,11 @@ export default function Viewdetails() {
   // ── WebSocket — listen for SEAT_AVAILABLE ──
   useEffect(() => {
     const currentUser = JSON.parse(localStorage.getItem("user") || "{}");
-    const ws = new WebSocket("ws://localhost:5000");
+    const ws = new WebSocket(
+  process.env.REACT_APP_API_URL
+    .replace("https://", "wss://")
+    .replace("http://", "ws://")
+);
     wsRef.current = ws;
 
     ws.onmessage = (e) => {
@@ -123,7 +127,7 @@ export default function Viewdetails() {
     const isOwner   = trip.organizer?.email === user?.email;
     if (!tripEnded || !joined || isOwner) return;
 
-    fetch(`http://localhost:5000/ratings/check/${trip._id}/${user?.email}`)
+    fetch(`${process.env.REACT_APP_API_URL}/ratings/check/${trip._id}/${user?.email}`)
       .then(r => r.json())
       .then(data => {
         setHasRated(data.hasRated);
@@ -152,7 +156,7 @@ export default function Viewdetails() {
 
     const token = localStorage.getItem("token");
     setOwnerWaitlistLoading(true);
-    fetch(`http://localhost:5000/waitlist/${trip._id}`, {
+    fetch(`${process.env.REACT_APP_API_URL}/waitlist/${trip._id}`, {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then(r => r.json())
@@ -170,7 +174,7 @@ export default function Viewdetails() {
     const isFull  = (trip.maxParticipants - (trip.participants?.length || 0)) <= 0;
     if (!isFull || joined || isOwner) return;
 
-    fetch(`http://localhost:5000/waitlist/check/${trip._id}/${user?.email}`)
+    fetch(`${process.env.REACT_APP_API_URL}/waitlist/check/${trip._id}/${user?.email}`)
       .then(r => r.json())
       .then(data => {
         setOnWaitlist(data.onWaitlist);
@@ -268,7 +272,7 @@ export default function Viewdetails() {
         maxParticipants: Number(editData.maxParticipants),
         universities:    editData.universities.split(",").map(u => u.trim()).filter(Boolean),
       };
-      const res  = await fetch(`http://localhost:5000/trip/${trip._id}`, {
+      const res  = await fetch(`${process.env.REACT_APP_API_URL}/trip/${trip._id}`, {
         method:  "PUT",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
         body:    JSON.stringify(body),
@@ -286,7 +290,7 @@ export default function Viewdetails() {
   const handleExit = async () => {
     setActionLoading(true);
     try {
-      const res = await fetch("http://localhost:5000/exit-trip", {
+      const res = await fetch(`${process.env.REACT_APP_API_URL}/exit-trip`, {
         method:  "POST",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
         body:    JSON.stringify({ tripId: trip._id, email: user.email }),
@@ -301,7 +305,7 @@ export default function Viewdetails() {
   const handleCancel = async () => {
     setActionLoading(true);
     try {
-      const res = await fetch(`http://localhost:5000/trip/${trip._id}`, {
+      const res = await fetch(`${process.env.REACT_APP_API_URL}/trip/${trip._id}`, {
         method:  "DELETE",
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -315,7 +319,7 @@ export default function Viewdetails() {
     if (ratingValue === 0) return;
     setRatingSubmitting(true);
     try {
-      const res = await fetch("http://localhost:5000/ratings", {
+      const res = await fetch(`${process.env.REACT_APP_API_URL}/ratings`, {
         method:  "POST",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
         body:    JSON.stringify({
@@ -336,7 +340,7 @@ export default function Viewdetails() {
   const handleJoinWaitlist = async () => {
     setWaitlistLoading(true);
     try {
-      const res = await fetch("http://localhost:5000/waitlist/join", {
+      const res = await fetch(`${process.env.REACT_APP_API_URL}/waitlist/join`, {
         method:  "POST",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
         body:    JSON.stringify({ tripId: trip._id, user }),
@@ -354,7 +358,7 @@ export default function Viewdetails() {
   const handleLeaveWaitlist = async () => {
     setWaitlistLoading(true);
     try {
-      await fetch("http://localhost:5000/waitlist/leave", {
+      await fetch(`${process.env.REACT_APP_API_URL}/waitlist/leave`, {
         method:  "POST",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
         body:    JSON.stringify({ tripId: trip._id, email: user.email }),
@@ -757,7 +761,7 @@ export default function Viewdetails() {
                 <div className="vd-waitlist-owner-list">
                   {ownerWaitlist.map((entry, i) => {
                     const avatarUrl = entry.avatar
-                      ? (entry.avatar.startsWith("http") ? entry.avatar : `http://localhost:5000${entry.avatar}`)
+                      ? (entry.avatar.startsWith("http") ? entry.avatar : `${process.env.REACT_APP_API_URL}${entry.avatar}`)
                       : null;
                     return (
                       <div key={i} className="vd-waitlist-owner-row">

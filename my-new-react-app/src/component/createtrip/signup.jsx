@@ -31,7 +31,7 @@ export default function Signup() {
     }
 
     try {
-      const res  = await fetch("http://localhost:5000/add-user", {
+      const res  = await fetch(`${process.env.REACT_APP_API_URL}/add-user`, {
         method:  "POST",
         headers: { "Content-Type": "application/json" },
         body:    JSON.stringify(formData),
@@ -59,7 +59,7 @@ export default function Signup() {
       const result  = await signInWithPopup(auth, googleProvider);
       const idToken = await result.user.getIdToken();
 
-      const res  = await fetch("http://localhost:5000/auth/google", {
+      const res  = await fetch(`${process.env.REACT_APP_API_URL}/auth/google`, {
         method:  "POST",
         headers: { "Content-Type": "application/json" },
         body:    JSON.stringify({ idToken }),

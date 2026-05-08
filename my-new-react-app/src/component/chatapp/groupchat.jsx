@@ -26,14 +26,14 @@ export default function GroupChat() {
   const avatarUrl = (src) => {
     if (!src) return "";
     if (src.startsWith("http")) return src;
-    return `http://localhost:5000${src}`;
+    return `${process.env.REACT_APP_API_URL}${src}`;
   };
 
   // ── Load trip ──
   useEffect(() => {
     async function loadTrip() {
       try {
-        const res  = await fetch(`http://localhost:5000/trip/${tripId}`);
+        const res  = await fetch(`${process.env.REACT_APP_API_URL}/trip/${tripId}`);
         const data = await res.json();
         if (!data) throw new Error("Trip not found");
 
@@ -41,7 +41,7 @@ export default function GroupChat() {
         try {
           const token = localStorage.getItem("token");
           const uRes  = await fetch(
-            `http://localhost:5000/users/${encodeURIComponent(data.organizer?.email)}`,
+            `{process.env.REACT_APP_API_URL}/users/${encodeURIComponent(data.organizer?.email)}`,
             { headers: { Authorization: `Bearer ${token}` } }
           );
           if (uRes.ok) {
@@ -56,7 +56,7 @@ export default function GroupChat() {
             try {
               const tok  = localStorage.getItem("token");
               const pRes = await fetch(
-                `http://localhost:5000/users/${encodeURIComponent(p.email)}`,
+                `${process.env.REACT_APP_API_URL}/users/${encodeURIComponent(p.email)}`,
                 { headers: { Authorization: `Bearer ${tok}` } }
               );
               if (pRes.ok) {
@@ -93,7 +93,7 @@ export default function GroupChat() {
 
   // ── Load message history ──
   useEffect(() => {
-    fetch(`http://localhost:5000/messages/${tripId}`)
+    fetch(`${process.env.REACT_APP_API_URL}/messages/${tripId}`)
       .then(r => r.json())
       .then(data => setMessages(data))
       .catch(console.error);
@@ -106,7 +106,10 @@ export default function GroupChat() {
 
   // ── WebSocket ──
   useEffect(() => {
-    const ws = new WebSocket("ws://localhost:5000");
+    const ws = new WebSocket(
+    process.env.REACT_APP_API_URL
+      .replace("https://", "wss://")
+      .replace("http://", "ws://"));
     wsRef.current = ws;
 
     ws.onopen = () => {
@@ -285,7 +288,7 @@ export default function GroupChat() {
 
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch(`http://localhost:5000/trip/${tripId}/kick`, {
+      const res = await fetch(`${process.env.REACT_APP_API_URL}/trip/${tripId}/kick`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

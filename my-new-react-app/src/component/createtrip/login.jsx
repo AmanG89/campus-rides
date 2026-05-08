@@ -54,7 +54,7 @@ export default function Login() {
   // ── Fetch today's trip for left panel ──
   useEffect(() => {
     const today = new Date().toISOString().split("T")[0];
-    fetch("http://localhost:5000/get-trips")
+    fetch(`${process.env.REACT_APP_API_URL}/get-trips`)
       .then((r) => r.json())
       .then(({ trips }) => {
         if (!trips || trips.length === 0) return;
@@ -79,7 +79,7 @@ export default function Login() {
   const checkAndPromptRatings = async (token, user) => {
     try {
       const today = new Date().toISOString().split("T")[0];
-      const res   = await fetch("http://localhost:5000/get-trips");
+      const res   = await fetch(`${process.env.REACT_APP_API_URL}/get-trips`);
       const data  = await res.json();
       const trips = data.trips || [];
 
@@ -98,7 +98,7 @@ export default function Login() {
       // Check which ones haven't been rated yet
       const checks = await Promise.all(
         endedJoined.map(t =>
-          fetch(`http://localhost:5000/ratings/check/${t._id}/${user.email}`)
+          fetch(`${process.env.REACT_APP_API_URL}/ratings/check/${t._id}/${user.email}`)
             .then(r => r.json())
             .then(d => ({ trip: t, hasRated: d.hasRated }))
             .catch(() => ({ trip: t, hasRated: true })) // on error assume rated
@@ -131,7 +131,7 @@ export default function Login() {
     if (!skip && ratingValue > 0) {
       setRatingSubmitting(true);
       try {
-        await fetch("http://localhost:5000/ratings", {
+        await fetch(`${process.env.REACT_APP_API_URL}/ratings`, {
           method:  "POST",
           headers: {
             "Content-Type": "application/json",
@@ -172,7 +172,7 @@ export default function Login() {
     e.preventDefault();
     setError(""); setSuccess(""); setLoading(true);
     try {
-      const res  = await fetch("http://localhost:5000/login", {
+      const res  = await fetch(`${process.env.REACT_APP_API_URL}/login`, {
         method:  "POST",
         headers: { "Content-Type": "application/json" },
         body:    JSON.stringify(formData),
@@ -196,7 +196,7 @@ export default function Login() {
       const result  = await signInWithPopup(auth, googleProvider);
       const idToken = await result.user.getIdToken();
 
-      const res  = await fetch("http://localhost:5000/auth/google", {
+      const res  = await fetch(`${process.env.REACT_APP_API_URL}/auth/google`, {
         method:  "POST",
         headers: { "Content-Type": "application/json" },
         body:    JSON.stringify({ idToken }),
@@ -239,7 +239,7 @@ export default function Login() {
     setOnboardLoading(true); setOnboardError("");
     try {
       // Update the user record on the backend
-      const res = await fetch(`http://localhost:5000/update-profile/${pendingUser.email}`, {
+      const res = await fetch(`${process.env.REACT_APP_API_URL}/update-profile/${pendingUser.email}`, {
         method:  "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -368,7 +368,7 @@ export default function Login() {
                   <img
                     src={trip.imageUrl.startsWith("http")
                       ? trip.imageUrl
-                      : `http://localhost:5000${trip.imageUrl}`}
+                      : `${process.env.REACT_APP_API_URL}${trip.imageUrl}`}
                     className="ln-rating-trip-img"
                     alt={trip.title}
                   />
@@ -492,7 +492,7 @@ export default function Login() {
                     <img
                       src={todayTrip.imageUrl.startsWith("http")
                         ? todayTrip.imageUrl
-                        : `http://localhost:5000${todayTrip.imageUrl}`}
+                        : `${process.env.REACT_APP_API_URL}${todayTrip.imageUrl}`}
                       alt={todayTrip.title} className="ln-trip-img" />
                     <div className="ln-trip-img-overlay">
                       <div className="ln-trip-price-badge">₹{todayTrip.price}/seat</div>
@@ -564,7 +564,7 @@ export default function Login() {
                     <img
                       src={todayTrip.organizer.avatar.startsWith("http")
                         ? todayTrip.organizer.avatar
-                        : `http://localhost:5000${todayTrip.organizer.avatar}`}
+                        : `${process.env.REACT_APP_API_URL}${todayTrip.organizer.avatar}`}
                       alt={todayTrip.organizer.name}
                       className="ln-org-avatar-img"
                       onError={e => { e.target.style.display = "none"; }}
@@ -590,7 +590,7 @@ export default function Login() {
                 avatarList.map((p, i) =>
                   p.avatar ? (
                     <img key={i}
-                      src={p.avatar.startsWith("http") ? p.avatar : `http://localhost:5000${p.avatar}`}
+                      src={p.avatar.startsWith("http") ? p.avatar : `${process.env.REACT_APP_API_URL}${p.avatar}`}
                       alt={p.name} className="ln-av ln-av-img"
                       style={{ zIndex: avatarList.length - i }} />
                   ) : (

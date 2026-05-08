@@ -65,7 +65,7 @@ export default function Middle({ trips = [] }) {
   const avatarUrl = (src) => {
     if (!src) return "";
     if (src.startsWith("http")) return src;
-    return `http://localhost:5000${src}`;
+    return `${process.env.REACT_APP_API_URL}${src}`;
   };
 
   // Re-evaluate status badges every minute
